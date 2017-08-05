@@ -17,15 +17,44 @@ window.onload = function () {
     width = canvas.width = window.innerWidth;
     height = canvas.height = window.innerHeight;
 
+    document.addEventListener("mousedown", mousedown, false);
+    document.addEventListener("mouseup", mouseup, false);
+    document.addEventListener("mousemove", mousemove, false);
+
     main();
 }
 
-var shapes = [];
+// mouse
+var mousePos, isDown = false;
+var dragPoint, offSet;
+var slide = {
+    start: { x: 0, y: 0 },
+    end: { x: 0, y: 0 },
+    startTime: 0,
+    endTime: 0,
+    getDeltaVel: function (max) {
+        let vec = new Vector(this.end.x - this.start.x,
+            this.end.y - this.start.y);
+
+        vec.divideScalar((this.endTime - this.startTime) / 1000);
+        if (vec.lengthSq() > max * max && max) vec.setLength(max);
+        return vec;
+    }
+};
+
+// shaped
+var shapes = [], num = 2;
 
 function main() {
     console.log("start");
 
-    shapes.push(new Shape_Rect(0, 0, 200, 100));
+    for (let i = 0; i < num; i++) {
+        let obj = new Shape_Rect(randomInt(0, width), randomInt(0, height),
+            randomInt(100, 200), randomInt(100, 200),
+            randomInt(100, 200), randomInt(0, 360));
+        obj.rotateSpeed = toRadio(randomInt(-90, 90));
+        shapes.push(obj);
+    }
 
     window.requestAnimationFrame(mainLoop);
     //mainLoop();
@@ -33,6 +62,12 @@ function main() {
 
 
 function update(dt) {
+    if (isDown) {
+        //update
+        dragPoint.pos.x = mousePos.x - offSet.x;
+        dragPoint.pos.y = mousePos.y - offSet.y;
+    }
+
     for (let i = 0; i < shapes.length; i++) {
         let obj = shapes[i];
         ctx.fillStyle = "#FFF";
@@ -43,7 +78,23 @@ function update(dt) {
 function draw(ctx) {
     for (let i = 0; i < shapes.length; i++) {
         let obj = shapes[i];
+        ctx.save();
+
+        if (isDown && obj === dragPoint) {
+            ctx.shadowColor = "#000";
+            ctx.shadowOffsetX = 4;
+            ctx.shadowOffsetY = 4;
+            ctx.shadowBlur = 8;
+        }
+
         obj.draw(ctx);
+
+        drawString(ctx, i + "",
+            obj.pos.x, obj.pos.y,
+            "#000", 10, "consolas",
+            0, 0, 0);
+
+        ctx.restore();
     }
 }
 
@@ -72,24 +123,71 @@ function mainLoop(timestamp) {
     }
 }
 
+function mousedown(e) {
+    dragPoint = findDragPoint(e.clientX, e.clientY);
+    if (dragPoint) {
+        slide.start = mousePos;
+        slide.startTime = getNow();
+
+        isDown = true;
+        offSet = {
+            x: mousePos.x - dragPoint.pos.x,
+            y: mousePos.y - dragPoint.pos.y
+        };
+        let index = shapes.indexOf(dragPoint);
+        shapes.push(shapes[index]);
+        shapes.splice(index, 1);
+    }
+}
+
+function mouseup(e) {
+    isDown = false;
+    if (dragPoint) {
+        slide.end = mousePos;
+        slide.endTime = getNow();
+        dragPoint.vel = slide.getDeltaVel(1000);
+    }
+}
+
+function mousemove(e) {
+    mousePos = { x: e.clientX, y: e.clientY };
+}
+
+function findDragPoint(x, y) {
+    for (let i = 0; i < shapes.length; i++) {
+        let obj = shapes[i];
+        let len = utils.distanceXY(x, y, obj.pos.x, obj.pos.y);
+        let cRect = ((obj.h > obj.w) ? obj.h : obj.w) / 2;
+        if (len < cRect) return obj;
+    }
+    return null;
+}
+
 //--------object-------------
-function Shape_Rect(x, y, w, h) {
+function Shape_Rect(x, y, w, h, speed, direction) {
     this.pos = new Vector(x, y);// center
     this.w = w;
     this.h = h;
-    
-    this.directionAngle = 0;
-    this.rotateSpeed = 0.1;
 
-    this.speed = new Vector(1, 0);
-    this.speed.setLength(20);
-    this.speed.setAngleDeg(45);
+    this.directionAngle = toRadio(0);
+    this.rotateSpeed = toRadio(30);
+
+    this.vel = new Vector(0, 0);
+    this.vel.setLength(speed);
+    this.vel.setAngleDeg(direction);
 }
 Shape_Rect.prototype.update = function (dt) {
     this.directionAngle += this.rotateSpeed * dt;
 
-    let nowSpeed = this.speed.clone().multiplyScalar(dt);
+    let nowSpeed = this.vel.clone().multiplyScalar(dt);
     this.pos.add(nowSpeed);
+
+    // check edge
+    if (this.pos.x < 0 && this.vel.x < 0) this.vel.x *= -1;
+    if (this.pos.x > width && this.vel.x > 0) this.vel.x *= -1;
+    if (this.pos.y < 0 && this.vel.y < 0) this.vel.y *= -1;
+    if (this.pos.y > height && this.vel.y > 0) this.vel.y *= -1;
+
 }
 Shape_Rect.prototype.draw = function (ctx) {
     ctx.save();
@@ -120,4 +218,7 @@ function randomInt(min, max) {
 }
 function random(min, max) {
     return Math.random() * (max - min) + min;
+}
+function getNow() {
+    return new Date().getTime();
 }
