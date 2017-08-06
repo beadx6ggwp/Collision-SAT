@@ -4,6 +4,7 @@ function Vector(x, y) {
 };
 
 /* 
+    ### Examples:
     var vec = Vector.fromArray([42,21]);
     vec.toString();
     // => x:42, y:21
@@ -13,6 +14,7 @@ Vector.fromArray = function (arr) {
 };
 
 /*
+    ### Examples:
     var vec = Victor.fromObject({ x: 42, y: 21 });
     vec.toString();
     // => x:42, y:21
@@ -113,6 +115,19 @@ Vector.prototype.getAngleDeg = function () {
     return this.rad2deg(this.getAngle());
 };
 
+/* 
+    ### Examples:
+    var v1 = new Vector(10,0);
+    v1.rotateDeg(90);
+
+    v1.toString();
+    // => x:0, y:10
+
+    v1.rotateDeg(90);
+
+    v1.toString();
+    // => x:-10, y:0
+*/
 Vector.prototype.rotate = function (angle) {
     let new_x = (this.x * Math.cos(angle)) - (this.y * Math.sin(angle));
     let new_y = (this.x * Math.sin(angle)) + (this.y * Math.cos(angle));
@@ -129,13 +144,76 @@ Vector.prototype.rotateDeg = function (angle) {
     this.rotate(angle);
 };
 
-Vector.prototype.rotateTo = function(rotation){
+/* 
+    ### Examples:
+    var v1 = new Vector(10,0);
+    v1.rotateToDeg(90);
+
+    v1.toString();
+    // => x:0, y:10
+
+    v1.rotateToDeg(90);
+
+    v1.toString();
+    // => x:0, y:10
+*/
+Vector.prototype.rotateTo = function (rotation) {
     this.rotate(rotation - this.getAngle());
-}
-Vector.prototype.rotateToDeg = function(rotation){
+};
+Vector.prototype.rotateToDeg = function (rotation) {
     rotation = this.deg2rad(rotation);
     this.rotateTo(rotation);
-}
+};
+
+/* 
+    ### Examples:
+    var center = new Vector(50, 50);
+    var p1 = new Vector(75,50);
+
+    p1.rotateRefPointDeg(90, center);
+    p1.toString();
+    // => x:50, y:75
+
+    p1.rotateRefPointDeg(90, center);
+    p1.toString();
+    // => x:25, y:50
+*/
+Vector.prototype.rotateRefPoint = function (angle, refP) {
+    let new_x = (this.x - refP.x) * Math.cos(angle) - (this.y - refP.y) * Math.sin(angle) + refP.x;
+    let new_y = (this.y - refP.y) * Math.cos(angle) + (this.x - refP.x) * Math.sin(angle) + refP.y;
+    this.x = new_x;
+    this.y = new_y;
+};
+Vector.prototype.rotateRefPointDeg = function (angle, refP) {
+    angle = this.deg2rad(angle);
+    this.rotateRefPoint(angle, refP);
+};
+
+/* 
+    ### Examples:
+    var center = new Vector(50, 50);
+    var p1 = new Vector(75,50);
+
+    p1.rotateToRefPointDeg(90, center);
+    p1.toString();
+    // => x:50, y:75
+
+    p1.rotateToRefPointDeg(90, center);
+    p1.toString();
+    // => x:50, y:75
+*/
+Vector.prototype.rotateToRefPoint = function (rotation, refP) {
+    let angle = rotation - Math.atan2(this.y - refP.y, this.x - refP.x);// this.position angle to refP 
+    
+    let new_x = (this.x - refP.x) * Math.cos(angle) - (this.y - refP.y) * Math.sin(angle) + refP.x;
+    let new_y = (this.y - refP.y) * Math.cos(angle) + (this.x - refP.x) * Math.sin(angle) + refP.y;
+    this.x = new_x;
+    this.y = new_y;
+};
+Vector.prototype.rotateToRefPointDeg = function (rotation, refP) {
+    rotation = this.deg2rad(rotation);
+    this.rotateToRefPoint(rotation, refP);
+};
 
 
 Vector.prototype.setLength = function (len) {
