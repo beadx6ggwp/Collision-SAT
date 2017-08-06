@@ -114,13 +114,28 @@ Vector.prototype.getAngleDeg = function () {
 };
 
 Vector.prototype.rotate = function (angle) {
-    this.x = (this.x * Math.cos(angle)) - (this.y * Math.sin(angle));
-    this.y = (this.x * Math.sin(angle)) + (this.y * Math.cos(angle));
+    let new_x = (this.x * Math.cos(angle)) - (this.y * Math.sin(angle));
+    let new_y = (this.x * Math.sin(angle)) + (this.y * Math.cos(angle));
+
+    this.x = new_x;
+    this.y = new_y;
+    /* y error, but why?
+    this.x = this.x * Math.cos(angle) - this.y * Math.sin(angle);
+    this.y = this.y * Math.cos(angle) + this.x * Math.sin(angle);
+    */
 };
 Vector.prototype.rotateDeg = function (angle) {
     angle = this.deg2rad(angle);
     this.rotate(angle);
 };
+
+Vector.prototype.rotateTo = function(rotation){
+    this.rotate(rotation - this.getAngle());
+}
+Vector.prototype.rotateToDeg = function(rotation){
+    rotation = this.deg2rad(rotation);
+    this.rotateTo(rotation);
+}
 
 
 Vector.prototype.setLength = function (len) {
@@ -147,6 +162,13 @@ Vector.prototype.normalize = function () {
     }
 };
 Vector.prototype.norm = Vector.prototype.normalize;
+
+Vector.prototype.normalL = function () {
+    return new Vector(-this.y, this.x);
+};
+Vector.prototype.normalR = function () {
+    return new Vector(this.y, -this.x);
+};
 
 Vector.prototype.unfloat = function () {
     this.x = Math.round(this.x);

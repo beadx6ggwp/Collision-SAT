@@ -32,11 +32,11 @@ var slide = {
     end: { x: 0, y: 0 },
     startTime: 0,
     endTime: 0,
-    getDeltaVel: function (max) {
+    getDeltaVel: function (max, friction) {
         let vec = new Vector(this.end.x - this.start.x,
             this.end.y - this.start.y);
-
-        vec.divideScalar((this.endTime - this.startTime) / 1000);
+        let dt = (this.endTime - this.startTime) / 1000
+        vec.divideScalar(dt / (friction || 1));
         if (vec.lengthSq() > max * max && max) vec.setLength(max);
         return vec;
     }
@@ -45,14 +45,17 @@ var slide = {
 // shaped
 var shapes = [], num = 2;
 
+var debug = 1;
+
 function main() {
     console.log("start");
 
     for (let i = 0; i < num; i++) {
         let obj = new Shape_Rect(randomInt(0, width), randomInt(0, height),
             randomInt(100, 200), randomInt(100, 200),
-            randomInt(100, 200), randomInt(0, 360));
-        obj.rotateSpeed = toRadio(randomInt(-90, 90));
+            0, toRadio(45));
+        //obj.rotateSpeed = toRadio(randomInt(-90, 90));
+        obj.directionAngle = toRadio(-45);
         shapes.push(obj);
     }
 
@@ -88,11 +91,13 @@ function draw(ctx) {
         }
 
         obj.draw(ctx);
+        if (debug) {
+            drawString(ctx, i + "",
+                obj.pos.x, obj.pos.y,
+                "#000", 10, "consolas",
+                0, 0, 0);
 
-        drawString(ctx, i + "",
-            obj.pos.x, obj.pos.y,
-            "#000", 10, "consolas",
-            0, 0, 0);
+        }
 
         ctx.restore();
     }
@@ -124,7 +129,8 @@ function mainLoop(timestamp) {
 }
 
 function mousedown(e) {
-    dragPoint = findDragPoint(e.clientX, e.clientY);
+    dragPoint = findDragPoint(e.clientX - canvas.offsetLeft,
+        e.clientY - canvas.offsetTop);
     if (dragPoint) {
         slide.start = mousePos;
         slide.startTime = getNow();
@@ -145,12 +151,12 @@ function mouseup(e) {
     if (dragPoint) {
         slide.end = mousePos;
         slide.endTime = getNow();
-        dragPoint.vel = slide.getDeltaVel(1000);
+        dragPoint.vel = slide.getDeltaVel(0, 0.3);
     }
 }
 
 function mousemove(e) {
-    mousePos = { x: e.clientX, y: e.clientY };
+    mousePos = { x: e.clientX - canvas.offsetLeft, y: e.clientY - canvas.offsetTop };
 }
 
 function findDragPoint(x, y) {
@@ -170,7 +176,7 @@ function Shape_Rect(x, y, w, h, speed, direction) {
     this.h = h;
 
     this.directionAngle = toRadio(0);
-    this.rotateSpeed = toRadio(30);
+    this.rotateSpeed = toRadio(0);
 
     this.vel = new Vector(0, 0);
     this.vel.setLength(speed);
@@ -198,6 +204,14 @@ Shape_Rect.prototype.draw = function (ctx) {
     ctx.strokeStyle = "#000";
     ctx.strokeRect(- this.w / 2, - this.h / 2, this.w, this.h);
 
+    if (debug) {
+        ctx.strokeStyle = "#777";
+        ctx.beginPath();
+        ctx.moveTo(this.w / 4, 0);
+        ctx.lineTo(this.w / 2, 0);
+        ctx.stroke();
+    }
+
     ctx.restore();
 }
 
@@ -212,6 +226,9 @@ function drawCircle(x, y, r, side) {
 }
 function toRadio(angle) {
     return angle * Math.PI / 180;
+}
+function toDegree(angle) {
+    return angle * 180 / Math.PI;
 }
 function randomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min);

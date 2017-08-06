@@ -1,7 +1,7 @@
 function drawString(ctx, text, posX, posY,
 	textColor, fontSize, font,
 	rotation, align, inline) {
-	var lines = text.split("\n");
+	let lines = text.split("\n");
 	if (!rotation) rotation = 0;
 	if (!font) font = "'serif'";
 	if (!fontSize) fontSize = 16;
