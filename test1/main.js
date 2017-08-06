@@ -174,6 +174,13 @@ function Shape_Rect(x, y, w, h, speed, direction) {
     this.pos = new Vector(x, y);// center
     this.w = w;
     this.h = h;
+    this.corners = [
+        // Upper right corner, Bottom right corner, Bottom left corner, Upper left corner
+        new Vector(this.w / 2, -this.h / 2),
+        new Vector(this.w / 2, this.h / 2),
+        new Vector(-this.w / 2, this.h / 2),
+        new Vector(-this.w / 2, -this.h / 2)
+    ];
 
     this.directionAngle = toRadio(0);
     this.rotateSpeed = toRadio(0);
