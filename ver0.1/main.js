@@ -43,7 +43,7 @@ var slide = {
 };
 
 // shaped
-var shapes = [], num = 2;
+var shapes = [], num = 5;
 
 var debug = 1;
 
@@ -52,13 +52,12 @@ function main() {
 
     for (let i = 0; i < num; i++) {
         let obj = new Shape_Rect(randomInt(0, width), randomInt(0, height),
-            200, 100,
-            0, toRadio(45));
-        //obj.rotateSpeed = toRadio(randomInt(-90, 90));
-        obj.directionAngle = toRadio(0);
+            randomInt(100, 200), randomInt(100, 200),
+            randomInt(50, 200), toRadio(45));
+        obj.rotateSpeed = toRadio(randomInt(-90, 90));
+        obj.directionAngle = Math.PI * Math.random();
         shapes.push(obj);
     }
-    shapes[0].directionAngle = toRadio(45);
 
     window.requestAnimationFrame(mainLoop);
     //mainLoop();
@@ -72,13 +71,18 @@ function update(dt) {
         ctx.fillStyle = "#FFF";
         obj.update(dt);
     }
-
-    if (!SAT_Collision(shapes[0], shapes[1])) {
-        ctx.fillStyle = "#F77";
-        console.log("Boom");
+    for (let i = 0; i < shapes.length; i++) {
+        let isBoom = 0;
+        for (let j = 0; j < shapes.length; j++) {
+            if (i == j) continue;
+            if (!SAT_Collision(shapes[i], shapes[j])) {
+                isBoom = 1;
+            }
+        }
+        if(isBoom) shapes[i].color = "#F77";
+        else shapes[i].color = "#FFF";
     }
-    else
-        ctx.fillStyle = "#FFF";
+
 }
 
 function draw(ctx) {

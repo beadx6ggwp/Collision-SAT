@@ -18,6 +18,8 @@ function Shape_Rect(x, y, w, h, speed, direction) {
     this.vel = new Vector(0, 0);
     this.vel.setLength(speed);
     this.vel.setAngleDeg(direction);
+
+    this.color = "#FFF";
 }
 
 Shape_Rect.prototype.update = function (dt) {
@@ -39,6 +41,7 @@ Shape_Rect.prototype.draw = function (ctx) {
     ctx.translate(this.pos.x, this.pos.y);
     ctx.rotate(this.directionAngle);
 
+    ctx.fillStyle = this.color;
     ctx.fillRect(- this.w / 2, - this.h / 2, this.w, this.h);
     ctx.strokeStyle = "#000";
     ctx.strokeRect(- this.w / 2, - this.h / 2, this.w, this.h);
