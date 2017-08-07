@@ -52,12 +52,13 @@ function main() {
 
     for (let i = 0; i < num; i++) {
         let obj = new Shape_Rect(randomInt(0, width), randomInt(0, height),
-            randomInt(100, 200), randomInt(100, 200),
+            200, 100,
             0, toRadio(45));
         //obj.rotateSpeed = toRadio(randomInt(-90, 90));
-        obj.directionAngle = toRadio(-45);
+        obj.directionAngle = toRadio(0);
         shapes.push(obj);
     }
+    shapes[0].directionAngle = toRadio(45);
 
     window.requestAnimationFrame(mainLoop);
     //mainLoop();
@@ -170,57 +171,7 @@ function findDragPoint(x, y) {
 }
 
 //--------object-------------
-function Shape_Rect(x, y, w, h, speed, direction) {
-    this.pos = new Vector(x, y);// center
-    this.w = w;
-    this.h = h;
-    this.corners = [
-        // Upper right corner, Bottom right corner, Bottom left corner, Upper left corner
-        new Vector(this.w / 2, -this.h / 2),
-        new Vector(this.w / 2, this.h / 2),
-        new Vector(-this.w / 2, this.h / 2),
-        new Vector(-this.w / 2, -this.h / 2)
-    ];
 
-    this.directionAngle = toRadio(0);
-    this.rotateSpeed = toRadio(0);
-
-    this.vel = new Vector(0, 0);
-    this.vel.setLength(speed);
-    this.vel.setAngleDeg(direction);
-}
-Shape_Rect.prototype.update = function (dt) {
-    this.directionAngle += this.rotateSpeed * dt;
-
-    let nowSpeed = this.vel.clone().multiplyScalar(dt);
-    this.pos.add(nowSpeed);
-
-    // check edge
-    if (this.pos.x < 0 && this.vel.x < 0) this.vel.x *= -1;
-    if (this.pos.x > width && this.vel.x > 0) this.vel.x *= -1;
-    if (this.pos.y < 0 && this.vel.y < 0) this.vel.y *= -1;
-    if (this.pos.y > height && this.vel.y > 0) this.vel.y *= -1;
-
-}
-Shape_Rect.prototype.draw = function (ctx) {
-    ctx.save();
-    ctx.translate(this.pos.x, this.pos.y);
-    ctx.rotate(this.directionAngle);
-
-    ctx.fillRect(- this.w / 2, - this.h / 2, this.w, this.h);
-    ctx.strokeStyle = "#000";
-    ctx.strokeRect(- this.w / 2, - this.h / 2, this.w, this.h);
-
-    if (debug) {
-        ctx.strokeStyle = "#777";
-        ctx.beginPath();
-        ctx.moveTo(this.w / 4, 0);
-        ctx.lineTo(this.w / 2, 0);
-        ctx.stroke();
-    }
-
-    ctx.restore();
-}
 
 
 // ----tool-------
