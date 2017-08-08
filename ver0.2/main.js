@@ -101,6 +101,7 @@ function update(dt) {
             if (i == j) continue;
             if (SAT_Collision(shapes[i].satShape, shapes[j].satShape)) {
                 isBoom = 1;
+                break;
             }
         }
         if (isBoom) shapes[i].color = "rgba(255, 125, 125, 0.5)";
@@ -183,7 +184,6 @@ function mousedown(e) {
             y: mousePos.y - dragPoint.pos.y
         };
         let index = shapes.indexOf(dragPoint);
-        console.log(index);
         shapes.push(shapes[index]);
         shapes.splice(index, 1);
     }
