@@ -20,12 +20,18 @@ Vector.fromArray = function (arr) {
     // => x:42, y:21
 */
 Vector.fromObject = function (obj) {
-    return new Victor(obj.x || 0, obj.y || 0);
+    return new Vector(obj.x || 0, obj.y || 0);
 };
 
-
-Vector.prototype.clone = function () {
-    return new Victor(this.x, this.y);
+/*
+    ### Examples:
+    var vec = new Vector(10,20).clone();
+    vec.addScalar(40);
+    vec.toString();
+    // => x:50, y:60
+*/
+Vector.prototype.clone = function () {    
+    return new Vector(this.x, this.y);
 };
 
 

@@ -23,7 +23,8 @@ function Shape_Rect(x, y, w, h, speed, direction) {
 Shape_Rect.prototype.update = function (dt) {
     this.directionAngle += this.rotateSpeed * dt;
 
-    let nowSpeed = this.vel.clone().multiplyScalar(dt);
+    let nowSpeed = this.vel.clone();
+    nowSpeed.multiplyScalar(dt);
     this.pos.add(nowSpeed);
 
     // check edge
