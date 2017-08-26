@@ -21,8 +21,8 @@ function SAT_Collision(polygonA, polygonB) {
     if (!isSeparated) {
         // use polygonB normals to evaluate
         for (let i = 0; i < normal_polygonB.length; i++) {
-            let minMax_A = getMinMax(polygonA.getVertices(), normal_polygonA[i]),
-                minMax_B = getMinMax(polygonB.getVertices(), normal_polygonA[i]);
+            let minMax_A = getMinMax(polygonA.getVertices(), normal_polygonB[i]),
+                minMax_B = getMinMax(polygonB.getVertices(), normal_polygonB[i]);
 
             isSeparated = (minMax_B.min > minMax_A.max || minMax_A.min > minMax_B.max);
 
@@ -34,12 +34,12 @@ function SAT_Collision(polygonA, polygonB) {
 }
 
 function getMinMax(vertices, axis) {
-    let min_DotProduct = vertices[0].projectOnto(axis).length(),
-        max_DotProduct = vertices[0].projectOnto(axis).length();
+    let min_DotProduct = vertices[0].projectLengthOnto(axis),
+        max_DotProduct = vertices[0].projectLengthOnto(axis);
     let min_index = 0, max_index = 0;
 
     for (let i = 1; i < vertices.length; i++) {
-        let temp = vertices[i].projectOnto(axis).length();
+        let temp = vertices[i].projectLengthOnto(axis);
 
         if (temp < min_DotProduct) {
             min_DotProduct = temp;
@@ -51,6 +51,7 @@ function getMinMax(vertices, axis) {
             max_index = i;
         }
     }
+    
     let result = {
         min: min_DotProduct,
         max: max_DotProduct,

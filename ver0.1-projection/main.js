@@ -58,7 +58,7 @@ function main() {
         200, 250,
         0, toRadio(0)));
 
-    shapes[1].directionAngle = toRadio(0);
+    shapes[1].directionAngle = toRadio(45);
 
     window.requestAnimationFrame(mainLoop);
     //mainLoop();
