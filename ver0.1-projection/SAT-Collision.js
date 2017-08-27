@@ -11,26 +11,23 @@ function SAT_Collision(polygonA, polygonB) {
 
     // use polygonA normals to evaluate
     for (let i = 0; i < normal_polygonA.length; i++) {
-        let minMax_A = getMinMax(polygonA.getVertices(), normal_polygonA[i]),
-            minMax_B = getMinMax(polygonB.getVertices(), normal_polygonA[i]);
+        let minMax_A = getMinMax(vertices_polygonA, normal_polygonA[i]),
+            minMax_B = getMinMax(vertices_polygonB, normal_polygonA[i]);
 
         isSeparated = (minMax_B.min > minMax_A.max || minMax_A.min > minMax_B.max);
-        if (isSeparated) break;
+        if (isSeparated) return true;
     }
 
-    if (!isSeparated) {
-        // use polygonB normals to evaluate
-        for (let i = 0; i < normal_polygonB.length; i++) {
-            let minMax_A = getMinMax(polygonA.getVertices(), normal_polygonB[i]),
-                minMax_B = getMinMax(polygonB.getVertices(), normal_polygonB[i]);
+    // use polygonB normals to evaluate
+    for (let i = 0; i < normal_polygonB.length; i++) {
+        let minMax_A = getMinMax(vertices_polygonA, normal_polygonB[i]),
+            minMax_B = getMinMax(vertices_polygonB, normal_polygonB[i]);
 
-            isSeparated = (minMax_B.min > minMax_A.max || minMax_A.min > minMax_B.max);
-
-            if (isSeparated) break;
-        }
+        isSeparated = (minMax_B.min > minMax_A.max || minMax_A.min > minMax_B.max);
+        if (isSeparated) return true;
     }
 
-    return isSeparated;// true:Separated boxes, false:Collided boxes
+    return false;// true:Separated boxes, false:Collided boxes
 }
 
 function getMinMax(vertices, axis) {
@@ -51,7 +48,7 @@ function getMinMax(vertices, axis) {
             max_index = i;
         }
     }
-    
+
     let result = {
         min: min_DotProduct,
         max: max_DotProduct,

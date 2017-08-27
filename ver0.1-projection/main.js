@@ -51,14 +51,17 @@ function main() {
     console.log("start");
 
     shapes.push(new Shape_Rect(randomInt(0, width), randomInt(0, height),
-        200, 250,
+        300, 200,
         0, toRadio(0)));
+    shapes[0].directionAngle = toRadio(20);
+    shapes[0].rotateSpeed = -0.5;
 
     shapes.push(new Shape_Rect(randomInt(0, width), randomInt(0, height),
-        200, 250,
+        150, 100,
         0, toRadio(0)));
-
     shapes[1].directionAngle = toRadio(45);
+    shapes[1].rotateSpeed = 0.5;
+
 
     window.requestAnimationFrame(mainLoop);
     //mainLoop();
@@ -80,7 +83,7 @@ function update(dt) {
                 isBoom = 1;
             }
         }
-        if (isBoom) shapes[i].color = "#F77";
+        if (isBoom) shapes[i].color = "rgba(255,125,125,0.7)";
         else shapes[i].color = "#FFF";
     }
 }

@@ -30,7 +30,7 @@ Vector.fromObject = function (obj) {
     vec.toString();
     // => x:50, y:60
 */
-Vector.prototype.clone = function () {    
+Vector.prototype.clone = function () {
     return new Vector(this.x, this.y);
 };
 
@@ -90,7 +90,6 @@ Vector.prototype.divideScalar = function (scalar) {
 Vector.prototype.dot = function (vec2) {
     return this.x * vec2.x + this.y * vec2.y;
 };
-
 Vector.prototype.cross = function (vec2) {
     return (this.x * vec2.y) - (this.y * vec2.x);
 };
@@ -99,6 +98,11 @@ Vector.prototype.projectOnto = function (vec2) {
     this.x = coeff * vec2.x;
     this.y = coeff * vec2.y;
     return this;
+};
+Vector.prototype.projectLengthOnto = function (vec2) {
+    let dotProduct = this.dot(vec2);
+    let len = vec2.length();
+    return dotProduct / len;
 };
 
 
@@ -210,7 +214,7 @@ Vector.prototype.rotateRefPointDeg = function (angle, refP) {
 */
 Vector.prototype.rotateToRefPoint = function (rotation, refP) {
     let angle = rotation - Math.atan2(this.y - refP.y, this.x - refP.x);// this.position angle to refP 
-    
+
     let new_x = (this.x - refP.x) * Math.cos(angle) - (this.y - refP.y) * Math.sin(angle) + refP.x;
     let new_y = (this.y - refP.y) * Math.cos(angle) + (this.x - refP.x) * Math.sin(angle) + refP.y;
     this.x = new_x;
