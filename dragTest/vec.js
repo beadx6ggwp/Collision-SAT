@@ -44,30 +44,36 @@ Vector.prototype.toString = function () {
 Vector.prototype.add = function (vec) {
     this.x += vec.x;
     this.y += vec.y;
+    return this;
 };
 Vector.prototype.addScalar = function (scalar) {
     this.x += scalar;
     this.y += scalar;
+    return this;
 };
 
 
 Vector.prototype.subtract = function (vec) {
     this.x -= vec.x;
     this.y -= vec.y;
+    return this;
 };
 Vector.prototype.subtractScalar = function (scalar) {
     this.x -= scalar;
     this.y -= scalar;
+    return this;
 };
 
 
 Vector.prototype.multiply = function (vector) {
     this.x *= vector.x;
     this.y *= vector.y;
+    return this;
 };
 Vector.prototype.multiplyScalar = function (scalar) {
     this.x *= scalar;
     this.y *= scalar;
+    return this;
 };
 
 
@@ -84,6 +90,7 @@ Vector.prototype.divideScalar = function (scalar) {
         this.x = 0;
         this.y = 0;
     }
+    return this;
 };
 
 
@@ -144,6 +151,7 @@ Vector.prototype.rotate = function (angle) {
 
     this.x = new_x;
     this.y = new_y;
+    return this;
     /* y error, but why?
     this.x = this.x * Math.cos(angle) - this.y * Math.sin(angle);
     this.y = this.y * Math.cos(angle) + this.x * Math.sin(angle);
@@ -246,8 +254,9 @@ Vector.prototype.normalize = function () {
         this.x = 1;
         this.y = 0;
     } else {
-        this.divide(Victor(length, length));
+        this.divideScalar(length);
     }
+    return this;
 };
 Vector.prototype.norm = Vector.prototype.normalize;
 
