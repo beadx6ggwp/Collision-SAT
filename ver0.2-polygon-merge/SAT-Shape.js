@@ -53,14 +53,13 @@ Polygon.prototype.getNorm = function () {
     for (let i = 1; i < vertices.length; i++) {
         let p1 = vertices[i - 1],
             p2 = vertices[i];
-        // 其實要取normalL,但因為電腦的Y軸是相反的，所以取normalR才符合
-        n = new Vector(p2.x - p1.x, p2.y - p1.y).normalR();
+        n = new Vector(p2.x - p1.x, p2.y - p1.y).normalL();
         norms.push(n);
     }
 
     p1 = vertices[vertices.length - 1];
     p2 = vertices[0];
-    n = new Vector(p2.x - p1.x, p2.y - p1.y).normalR();
+    n = new Vector(p2.x - p1.x, p2.y - p1.y).normalL();
     norms.push(n);
 
     return norms;
@@ -99,10 +98,10 @@ Shape.prototype.update = function (dt) {
     this.pos.add(nowSpeed);
 
     // check edge
-    if (this.pos.x < 0 && this.vel.x < 0) this.vel.x *= -1;
-    if (this.pos.x > width && this.vel.x > 0) this.vel.x *= -1;
-    if (this.pos.y < 0 && this.vel.y < 0) this.vel.y *= -1;
-    if (this.pos.y > height && this.vel.y > 0) this.vel.y *= -1;
+    if (this.pos.x < 0 && this.vel.x <= 0) { this.vel.x *= -1; this.pos.x = 0 }
+    if (this.pos.x > width && this.vel.x >= 0) { this.vel.x *= -1; this.pos.x = width }
+    if (this.pos.y < 0 && this.vel.y <= 0) { this.vel.y *= -1; this.pos.y = 0 }
+    if (this.pos.y > height && this.vel.y >= 0) { this.vel.y *= -1; this.pos.y = height }
 
 }
 
